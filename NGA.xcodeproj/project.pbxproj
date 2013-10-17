@@ -122,6 +122,8 @@
 		0505A50B180E5A820086D093 /* NGA */ = {
 			isa = PBXGroup;
 			children = (
+				05BF0582180FE8ED009BF4A9 /* ASIHTTPRequest */,
+				05BF0583180FE8ED009BF4A9 /* messageCenter */,
 				0505A514180E5A820086D093 /* AppDelegate.h */,
 				0505A515180E5A820086D093 /* AppDelegate.m */,
 				0505A51D180E5A820086D093 /* MainStoryboard_iPhone.storyboard */,
@@ -166,6 +168,20 @@
 				0505A538180E5A820086D093 /* InfoPlist.strings */,
 			);
 			name = "Supporting Files";
+			sourceTree = "<group>";
+		};
+		05BF0582180FE8ED009BF4A9 /* ASIHTTPRequest */ = {
+			isa = PBXGroup;
+			children = (
+			);
+			path = ASIHTTPRequest;
+			sourceTree = "<group>";
+		};
+		05BF0583180FE8ED009BF4A9 /* messageCenter */ = {
+			isa = PBXGroup;
+			children = (
+			);
+			path = messageCenter;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -473,6 +489,7 @@
 				0505A542180E5A820086D093 /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
 		};
 		0505A543180E5A820086D093 /* Build configuration list for PBXNativeTarget "NGATests" */ = {
 			isa = XCConfigurationList;
@@ -481,6 +498,7 @@
 				0505A545180E5A820086D093 /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
 		};
 /* End XCConfigurationList section */
 	};
