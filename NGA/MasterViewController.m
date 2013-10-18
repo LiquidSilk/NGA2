@@ -7,8 +7,8 @@
 //
 
 #import "MasterViewController.h"
-
 #import "DetailViewController.h"
+#import "MsgModel.h"
 
 @interface MasterViewController () {
     NSMutableArray *_objects;
@@ -35,6 +35,19 @@
     UIBarButtonItem *addButton = [[UIBarButtonItem alloc] initWithBarButtonSystemItem:UIBarButtonSystemItemAdd target:self action:@selector(insertNewObject:)];
     self.navigationItem.rightBarButtonItem = addButton;
     self.detailViewController = (DetailViewController *)[[self.splitViewController.viewControllers lastObject] topViewController];
+    
+    
+    [[SubscribeModel sharedModel] pushObserver:self];
+    [[MsgModel sharedModel] sendMsg:1002 withUrl:@"/thread.php?fid=7&page=1&lite=js&noprefix"];
+}
+
+-(void)receiveData:(DataVO*)dataVO
+{
+    if (dataVO.module == 1002)
+    {
+        arrayTList = [[dataVO.data objectForKey:@"data"] objectForKey:@"__T"];
+        [self.tableView reloadData];
+    }
 }
 
 - (void)didReceiveMemoryWarning
@@ -45,12 +58,15 @@
 
 - (void)insertNewObject:(id)sender
 {
-    if (!_objects) {
-        _objects = [[NSMutableArray alloc] init];
-    }
-    [_objects insertObject:[NSDate date] atIndex:0];
-    NSIndexPath *indexPath = [NSIndexPath indexPathForRow:0 inSection:0];
-    [self.tableView insertRowsAtIndexPaths:@[indexPath] withRowAnimation:UITableViewRowAnimationAutomatic];
+//    if (!_objects) {
+//        _objects = [[NSMutableArray alloc] init];
+//    }
+//    [_objects insertObject:[NSDate date] atIndex:0];
+//    NSIndexPath *indexPath = [NSIndexPath indexPathForRow:0 inSection:0];
+//    [self.tableView insertRowsAtIndexPaths:@[indexPath] withRowAnimation:UITableViewRowAnimationAutomatic];
+    
+    
+    [[MsgModel sharedModel] login:1001 withName:@"chenzhongjie42@gmail.com" withPwd:@"cql1038204"];
 }
 
 #pragma mark - Table View
@@ -62,15 +78,16 @@
 
 - (NSInteger)tableView:(UITableView *)tableView numberOfRowsInSection:(NSInteger)section
 {
-    return _objects.count;
+    return arrayTList.count;
 }
 
 - (UITableViewCell *)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath
 {
     UITableViewCell *cell = [tableView dequeueReusableCellWithIdentifier:@"Cell" forIndexPath:indexPath];
 
-    NSDate *object = _objects[indexPath.row];
-    cell.textLabel.text = [object description];
+    NSString* strIdx = [NSString stringWithFormat:@"%d", indexPath.row];
+    NSDictionary* dict = [arrayTList objectForKey:strIdx];
+    cell.textLabel.text = [dict objectForKey:@"subject"];
     return cell;
 }
 

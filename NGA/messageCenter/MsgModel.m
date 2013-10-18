@@ -2,7 +2,7 @@
 //  MsgModel.m
 //  Slime
 //
-//  Created by dominic tung on 13-4-3.
+//  Created by czj on 13-10-18.
 //
 //
 
@@ -12,7 +12,7 @@
 
 static MsgModel* _model;
 static uint TIME_OUT = 30;
-static NSString* serverName = @"http://183.129.175.36:7184";
+static NSString* serverName = @"http://bbs.ngacn.cc";
 
 @implementation MsgModel
 
@@ -64,6 +64,43 @@ static NSString* serverName = @"http://183.129.175.36:7184";
 
 }
 
+-(void)sendMsg:(uint)module withUrl:(NSString*)url
+{
+    NSMutableDictionary* __data = [[NSMutableDictionary alloc] init];
+    NSString* strUrl = [NSString stringWithFormat:@"%@%@", serverName, url];
+    [__data setValue:strUrl forKey:@"url"];
+    [__data setValue:[[NSNumber alloc] initWithInt:module ]  forKey:@"module"];
+    
+    
+    NSInvocationOperation* op = [[NSInvocationOperation alloc]initWithTarget:self selector:@selector(_handler_send:) object:__data];
+    [msgQueue addOperation:op];
+    [op release];
+    
+    NSLog(@"send.....");
+}
+
+-(void)login:(uint)module withName:(NSString*)name withPwd:(NSString*)pwd
+{
+    NSString* url = @"http://account.178.com/q_account.php?_act=login&type=username";
+    NSURL* __url = [NSURL URLWithString:url];
+    ASIFormDataRequest* __request = [ASIFormDataRequest requestWithURL:__url];
+    [__request setShouldRedirect:NO];
+    [__request setPostValue:@"application/x-www-form-urlencoded" forKey:@"Content-Type"];
+    [__request setPostValue:@"GBK" forKey:@"Accept-Charset"];
+    [__request setPostValue:@"AndroidNga/460" forKey:@"User-Agent"];
+    [__request setPostValue:name forKey:@"email"];
+    [__request setPostValue:pwd forKey:@"password"];
+    
+    NSLog(@"%@", [__request responseString]);
+    [__request startSynchronous];
+    int result = [__request responseStatusCode];
+    if (result == 302)
+    {
+        NSDictionary* headers = [__request responseHeaders];
+        [self parseHeader:headers];
+    }
+}
+
 -(void)_handler_send:(NSMutableDictionary*)data
 {
     NSLog(@"收到url....");
@@ -82,36 +119,41 @@ static NSString* serverName = @"http://183.129.175.36:7184";
 {
     NSLog(@"url:%@",url);
     NSURL* __url = [NSURL URLWithString:url];
-    ASIFormDataRequest* __request = [ASIFormDataRequest requestWithURL:__url];
+    ASIHTTPRequest* __request = [ASIHTTPRequest requestWithURL:__url];
+
+    [__request addRequestHeader:@"User-Agent" value:@"AndroidNga/460"];
+    [__request addRequestHeader:@"Cookie" value:@"GBK"];
+    [__request addRequestHeader:@"Content-Type" value:@"application/x-www-form-urlencoded"];
+    NSString* cid = [[NSUserDefaults standardUserDefaults] valueForKey:@"cid"];
+    NSString* uid = [[NSUserDefaults standardUserDefaults] valueForKey:@"uid"];
+    NSString* cookie = [NSString stringWithFormat:@"ngaPassportUid=%@; ngaPassportCid=%@", uid, cid];
+    [__request addRequestHeader:@"Cookie" value:cookie];
     [__request setTimeOutSeconds:TIME_OUT];
     __request.delegate = self;
     
-    //假如需要传递数据
-    if(data != Nil)
-    {
-        NSArray* __keys = [data allKeys];
-        int __itemCount = [data count];
-        int i=0;
-        //依次把数据全部写入到要POST的数据内
-        for(i=0; i<__itemCount; i++)
-        {
-            NSString* __key = (NSString*)[__keys objectAtIndex:i];
-            [__request setPostValue:[data objectForKey:__key] forKey:__key];
-        }
-    }
+//    //假如需要传递数据
+//    if(data != Nil)
+//    {
+//        NSArray* __keys = [data allKeys];
+//        int __itemCount = [data count];
+//        int i=0;
+//        //依次把数据全部写入到要POST的数据内
+//        for(i=0; i<__itemCount; i++)
+//        {
+//            NSString* __key = (NSString*)[__keys objectAtIndex:i];
+//            [__request setPostValue:[data objectForKey:__key] forKey:__key];
+//        }
+//    }
     
     //发送数据
     [__request startSynchronous];
     
-    NSString * __str = [self _readResponse2NSString:__request];
-    NSLog(@"服务端发来的数据：%@",__str);
-    
     //解析从服务端返回的数据
     NSDictionary* __responseData = [self _readResponse2NSDictionary:__request];
 
-    int __module = [(NSString*)[__responseData objectForKey:@"module"] intValue];
-    int __type = [(NSString*)[__responseData objectForKey:@"type"] intValue];
-    NSDictionary * __data = (NSDictionary *)[__responseData objectForKey:@"para"];
+    int __module = [[data objectForKey:@"module"] intValue];
+    int __type = 0;//[(NSString*)[__responseData objectForKey:@"type"] intValue];
+    NSDictionary * __data = __responseData;
     
     
     //获取协议号，所有观察者根据协议号来处理数据逻辑
@@ -132,7 +174,7 @@ static NSString* serverName = @"http://183.129.175.36:7184";
 }
 
 //该方法用来解析从服务端返回来的数据
--(NSData*)_readResponse:(ASIFormDataRequest*)request
+-(NSData*)_readResponse:(ASIHTTPRequest*)request
 {
     NSError * __error = [request error];
     if(!__error)
@@ -145,7 +187,7 @@ static NSString* serverName = @"http://183.129.175.36:7184";
 }
 
 //将HTTP返回的数据读成NSString类型
--(NSString*)_readResponse2NSString:(ASIFormDataRequest*)request
+-(NSString*)_readResponse2NSString:(ASIHTTPRequest*)request
 {
     NSData * __data = [self _readResponse:request];
     NSString * __string = [[NSString alloc] initWithData:__data encoding:NSUTF8StringEncoding];
@@ -153,11 +195,15 @@ static NSString* serverName = @"http://183.129.175.36:7184";
 }
 
 //将HTTP返回的数据读成NSDictionary类型
--(NSDictionary*)_readResponse2NSDictionary:(ASIFormDataRequest*)request
+-(NSDictionary*)_readResponse2NSDictionary:(ASIHTTPRequest*)request
 {
     NSData * __data = [self _readResponse:request];
+    NSStringEncoding gbkEncoding =CFStringConvertEncodingToNSStringEncoding(kCFStringEncodingGB_18030_2000);
+    NSString* _str = [[NSString alloc] initWithData:__data encoding:gbkEncoding];
+    NSLog(@"服务端发来的数据：%@",_str);
+    NSData* utfData = [_str dataUsingEncoding:NSUTF8StringEncoding];
     NSError* __error3 = nil;
-    id __jsonData = [NSJSONSerialization JSONObjectWithData:__data options:NSJSONReadingAllowFragments error:&__error3];
+    id __jsonData = [NSJSONSerialization JSONObjectWithData:utfData options:NSJSONReadingAllowFragments error:&__error3];
     if(__jsonData && __error3==nil)
     {
         if([__jsonData isKindOfClass:[NSDictionary class]])
@@ -166,5 +212,33 @@ static NSString* serverName = @"http://183.129.175.36:7184";
         }
     }
     return Nil;
+}
+
+-(void)parseHeader:(NSDictionary*)header
+{
+    NSString* strCookie = [header objectForKey:@"Set-Cookie"];
+    NSArray* arrayCookie = [strCookie componentsSeparatedByString:@";"];
+    
+    NSString* cid;
+    NSString* uid;
+    for (int i = 0; i < arrayCookie.count; i ++)
+    {
+        NSString* strTmp = [arrayCookie objectAtIndex:i];
+        NSString* keyCid = @"_sid=";
+        NSRange range1 = [strTmp rangeOfString:keyCid];
+        if (range1.length)
+        {
+            cid = [strTmp substringFromIndex:range1.location + range1.length];
+        }
+        
+        NSString* keyUid = @"_178c=";
+        NSRange range2 = [strTmp rangeOfString:keyUid];
+        if (range2.length)
+        {
+            uid = [strTmp substringFromIndex:range2.location + range2.length];
+        }
+    }
+    [[NSUserDefaults standardUserDefaults] setValue:cid forKey:@"cid"];
+    [[NSUserDefaults standardUserDefaults] setValue:uid forKey:@"uid"];
 }
 @end

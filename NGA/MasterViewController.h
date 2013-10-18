@@ -11,7 +11,9 @@
 @class DetailViewController;
 
 @interface MasterViewController : UITableViewController
-
+{
+    NSDictionary* arrayTList;
+}
 @property (strong, nonatomic) DetailViewController *detailViewController;
 
 @end
