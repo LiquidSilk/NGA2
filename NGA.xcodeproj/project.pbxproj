@@ -43,6 +43,7 @@
 		059690EF1810D4EF006DFD9C /* SystemConfiguration.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 059690EE1810D4EF006DFD9C /* SystemConfiguration.framework */; };
 		059690F11810D4F9006DFD9C /* MobileCoreServices.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 059690F01810D4F9006DFD9C /* MobileCoreServices.framework */; };
 		059690F31810D586006DFD9C /* libz.1.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 059690F21810D586006DFD9C /* libz.1.dylib */; };
+		05FBF4881814F6C7004F8381 /* PostCell.m in Sources */ = {isa = PBXBuildFile; fileRef = 05FBF4871814F6C7004F8381 /* PostCell.m */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -117,6 +118,8 @@
 		059690EE1810D4EF006DFD9C /* SystemConfiguration.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = SystemConfiguration.framework; path = System/Library/Frameworks/SystemConfiguration.framework; sourceTree = SDKROOT; };
 		059690F01810D4F9006DFD9C /* MobileCoreServices.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = MobileCoreServices.framework; path = System/Library/Frameworks/MobileCoreServices.framework; sourceTree = SDKROOT; };
 		059690F21810D586006DFD9C /* libz.1.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = libz.1.dylib; path = usr/lib/libz.1.dylib; sourceTree = SDKROOT; };
+		05FBF4861814F6C7004F8381 /* PostCell.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PostCell.h; sourceTree = "<group>"; };
+		05FBF4871814F6C7004F8381 /* PostCell.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = PostCell.m; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -194,6 +197,8 @@
 				0505A524180E5A820086D093 /* MasterViewController.m */,
 				0505A526180E5A820086D093 /* DetailViewController.h */,
 				0505A527180E5A820086D093 /* DetailViewController.m */,
+				05FBF4861814F6C7004F8381 /* PostCell.h */,
+				05FBF4871814F6C7004F8381 /* PostCell.m */,
 				0505A50C180E5A820086D093 /* Supporting Files */,
 			);
 			path = NGA;
@@ -407,6 +412,7 @@
 				059690E91810D469006DFD9C /* EventManager.m in Sources */,
 				059690EA1810D469006DFD9C /* MsgModel.m in Sources */,
 				059690EB1810D469006DFD9C /* SubscribeModel.m in Sources */,
+				05FBF4881814F6C7004F8381 /* PostCell.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

@@ -7,13 +7,13 @@
          shouldBeEnabled = "Yes"
          ignoreCount = "0"
          continueAfterRunningActions = "No"
-         filePath = "NGA/messageCenter/MsgModel.m"
-         timestampString = "403769938.74067"
+         filePath = "NGA/PostCell.m"
+         timestampString = "404043513.782821"
          startingColumnNumber = "9223372036854775807"
          endingColumnNumber = "9223372036854775807"
-         startingLineNumber = "242"
-         endingLineNumber = "242"
-         landmarkName = "-parseHeader:"
+         startingLineNumber = "64"
+         endingLineNumber = "64"
+         landmarkName = "+heightForTextView:WithText:"
          landmarkType = "5">
       </FileBreakpoint>
    </FileBreakpoints>

@@ -8,6 +8,7 @@
 
 #import "MasterViewController.h"
 #import "DetailViewController.h"
+#import "PostCell.h"
 #import "MsgModel.h"
 
 @interface MasterViewController () {
@@ -45,7 +46,21 @@
 {
     if (dataVO.module == 1002)
     {
-        arrayTList = [[dataVO.data objectForKey:@"data"] objectForKey:@"__T"];
+        NSDictionary* dict = [[dataVO.data objectForKey:@"data"] objectForKey:@"__T"];
+        arrayTList = [NSMutableArray arrayWithCapacity:1];
+        [arrayTList retain];
+            NSArray *keys;
+            int i, count;
+            id key, value;
+            
+            keys = [dict allKeys];
+            count = [keys count];
+            for (i = 0; i < count; i++)
+            {
+                key = [keys objectAtIndex: i];
+                value = [dict objectForKey: key];
+                [arrayTList addObject:value];
+            }
         [self.tableView reloadData];
     }
 }
@@ -83,18 +98,46 @@
 
 - (UITableViewCell *)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath
 {
-    UITableViewCell *cell = [tableView dequeueReusableCellWithIdentifier:@"Cell" forIndexPath:indexPath];
+    PostCell *cell = [tableView dequeueReusableCellWithIdentifier:@"PostCell1" forIndexPath:indexPath];
+    if (cell == nil) {
+        cell = [[PostCell alloc] initWithStyle:UITableViewCellStyleValue2 reuseIdentifier:@"PostCell1"];
+        
 
-    NSString* strIdx = [NSString stringWithFormat:@"%d", indexPath.row];
-    NSDictionary* dict = [arrayTList objectForKey:strIdx];
-    cell.textLabel.text = [dict objectForKey:@"subject"];
+    }
+
+    
+    NSDictionary* dict = [arrayTList objectAtIndex:indexPath.row];
+    NSString* title = [dict objectForKey:@"subject"];
+    
+    cell.title.text = title;
+    NSLog(@"%d----%@", title.length,title);
+    [cell setStyle:title];
+    
+//    //初始化label
+//    UILabel *label = [[UILabel alloc] initWithFrame:CGRectMake(0,0,0,0)];
+//    //设置自动行数与字符换行
+//    [label setNumberOfLines:3];
+//    label.lineBreakMode = NSLineBreakByCharWrapping;
+//    // 测试字串
+//    NSString *s = title;
+//    UIFont *font = [UIFont fontWithName:@"Arial" size:12];
+//    //设置一个行高上限
+//    CGSize size = CGSizeMake(320,2000);
+//    //计算实际frame大小，并将label的frame变成实际大小
+//    CGSize labelsize = [s sizeWithFont:font constrainedToSize:size lineBreakMode:NSLineBreakByCharWrapping
+//                        ];
+//    [label setFrame:CGRectMake(0, 0, labelsize.width, labelsize.height)];
+//    label.text = title;
+//    [cell.contentView addSubview:label];
+    
+    
     return cell;
 }
 
 - (BOOL)tableView:(UITableView *)tableView canEditRowAtIndexPath:(NSIndexPath *)indexPath
 {
     // Return NO if you do not want the specified item to be editable.
-    return YES;
+    return NO;
 }
 
 - (void)tableView:(UITableView *)tableView commitEditingStyle:(UITableViewCellEditingStyle)editingStyle forRowAtIndexPath:(NSIndexPath *)indexPath
@@ -107,6 +150,22 @@
     }
 }
 
+-(CGFloat)tableView:(UITableView *)tableView heightForRowAtIndexPath:(NSIndexPath *)indexPath
+{
+    NSDictionary* dict = [arrayTList objectAtIndex:indexPath.row];
+    NSString* title = [dict objectForKey:@"subject"];
+    
+    
+    if (title.length)
+    {
+        int nLine = floor(title.length / 20);
+        return (nLine + 1) * 30;
+    }
+    else
+    {
+        return 0;
+    }
+}
 /*
 // Override to support rearranging the table view.
 - (void)tableView:(UITableView *)tableView moveRowAtIndexPath:(NSIndexPath *)fromIndexPath toIndexPath:(NSIndexPath *)toIndexPath

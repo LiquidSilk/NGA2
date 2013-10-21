@@ -12,7 +12,7 @@
 
 @interface MasterViewController : UITableViewController
 {
-    NSDictionary* arrayTList;
+    NSMutableArray* arrayTList;
 }
 @property (strong, nonatomic) DetailViewController *detailViewController;
 
