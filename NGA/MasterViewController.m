@@ -105,6 +105,15 @@
 
     }
 
+    if (indexPath.row % 2 == 0)
+    {
+        cell.contentView.backgroundColor = [UIColor colorWithRed:0xFF/255.0f  green:0xF8/255.0f blue:0xE5/255.0f alpha:0.5];
+    }
+    else
+    {
+        cell.contentView.backgroundColor = [UIColor colorWithRed:0xFE/255.0f  green:0xF3/255.0f blue:0xD1/255.0f alpha:0.5];
+    }
+    
     
     NSDictionary* dict = [arrayTList objectAtIndex:indexPath.row];
     NSString* title = [dict objectForKey:@"subject"];
@@ -155,11 +164,13 @@
     NSDictionary* dict = [arrayTList objectAtIndex:indexPath.row];
     NSString* title = [dict objectForKey:@"subject"];
     
+    CGSize  size = [title sizeWithFont:[UIFont systemFontOfSize:14] constrainedToSize:CGSizeMake(240, 2000) lineBreakMode:NSLineBreakByWordWrapping];
     
+    return size.height + 25;
     if (title.length)
     {
         int nLine = floor(title.length / 20);
-        return (nLine + 1) * 30;
+        return (nLine + 1) * 25;
     }
     else
     {
